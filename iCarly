@@ -101,8 +101,8 @@ def JuanStep(x0, y0, z0, bounds):
 def iCarly(steps, x_bound, y_bound, z_bound):
     '''
     Computes the random walk by iterating through the `JuanStep`
-    function for a given number of steps. Stores the values of x
-    and y after each step, and generates separate arrays for the
+    function for a given number of steps. Stores the values of x,
+    y and z after each step, and generates separate arrays for the
     positions over the whole cycle for easy plotting.
     
     Parameters
