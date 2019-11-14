@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov  9 20:30:50 2018
+
+@author: matt
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d.axes3d as p3
+import matplotlib.animation as animation
+
+def JuanStep(x0, y0, z0, bounds):
+    '''
+    Computes one step of the random walk for the `iCarly` function
+    to iterate through, for a chosen number of steps.
+    
+    Parameters
+    ----------
+    x0 : number
+        Initil value for x, before the step
+    y0 : number
+        Initial value for y, before the step
+    z0 : number
+        Initial value for z, before the step
+    bounds : array
+        Array of form [x bound, y bound, z bound] to limit 
+        the range of the random walk
+        
+    Returns
+    -------
+    x : Value for x after the step has been taken
+    y : Value for y after the step has been taken
+    z : Value for z after the step has been taken
+    '''
+    
+    value = np.random.randint(1, 7)  #controls direction to move in, chosen at random for each step   
+    if value == 1:
+        if abs(x0 + 1) > bounds[0]:  #if x value is at boundary don't move past it
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move to the right one step
+            x = x0 + 1
+            y = y0
+            z = z0
+    
+    elif value == 2:
+        if abs(y0 - 1) > bounds[1]: #if y value is at boundary don't move past it
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move down one step
+            x = x0
+            y = y0 - 1
+            z = z0
+    
+    elif value == 3:
+        if abs(x0 - 1) > bounds[0]: #if x value is at boundary don't move past it
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move to the left one step
+            x = x0 - 1
+            y = y0
+            z = z0
+    
+    elif value == 4:
+        if abs(y0 + 1) > bounds[1]:  #if y value is at boundary don't move past it
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move up one step
+            x = x0
+            y = y0 + 1
+            z = z0
+    
+    elif value == 5:
+        if abs(z0 - 1) > bounds[2]:
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move in one step
+            x = x0
+            y = y0
+            z = z0 - 1
+    
+    elif value == 6:
+        if abs(z0 + 1) > bounds[2]:
+            x = x0
+            y = y0
+            z = z0
+        else:                        #move out one step
+            x = x0
+            y = y0
+            z = z0 + 1
+    
+    return x, y, z
+
+def iCarly(steps, x_bound, y_bound, z_bound):
+    '''
+    Computes the random walk by iterating through the `JuanStep`
+    function for a given number of steps. Stores the values of x
+    and y after each step, and generates separate arrays for the
+    positions over the whole cycle for easy plotting.
+    
+    Parameters
+    ----------
+    steps : number
+        Number of steps to iterate `JuanStep` function over
+    x_bound : number
+        Determines size of the x-axis (+ or - size/2)
+    y_bound : number
+        Determines size of the y-axis (+ or - size/2)
+    z_bound : number
+        Determines size of the z-axis (+ or - size/2)
+        
+    Returns
+    -------
+    x_pos : array of x-coordinates; appended from each step
+    y_pos : array of y-coordinates; appended from each step
+    z_pos : array of z-coordinates; appended from each step
+    '''
+    pos = []
+    
+    bounds = (int(x_bound/2), int(y_bound/2), int(z_bound/2))
+
+    x = np.random.randint(-bounds[0], bounds[0])
+    y = np.random.randint(-bounds[1], bounds[1])
+    z = np.random.randint(-bounds[2], bounds[2])
+    
+    
+    pos.append((x, y, z))
+
+    # Attaching 3D axis to the figure
+    fig = plt.figure()
+    ax = p3.Axes3D(fig)
+    
+    # Setting the axes properties
+    ax.set_xlim3d([-50.0, 50.0])
+    ax.set_xlabel('X')
+    
+    ax.set_ylim3d([-50.0, 50.0])
+    ax.set_ylabel('Y')
+    
+    ax.set_zlim3d([-50.0, 50.0])
+    ax.set_zlabel('Z')
+    
+    ax.set_title('3D Test')
+
+    
+    n = 0
+    while n < steps:
+        x, y, z = JuanStep(x, y, z, bounds)
+        pos.append((x, y, z))
+        n = n + 1
+    
+    # Creating the Animation object
+    animation.FuncAnimation(ax, iCarly(steps), pos, 
+                            fargs=[bounds[0]*2, bounds[1]*2, bounds[2]*2], 
+                            interval=1, blit=False)
+    
+    plt.show()
+    
+    return pos
+    
