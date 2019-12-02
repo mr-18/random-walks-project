@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec  2 13:41:52 2019
+
+@author: matt
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d.axes3d as p3d
+import matplotlib.animation as ani
+
+#fixing random state for reproducible data
+np.random.seed(1110101)
+
+def Line_generation(points, dimensions=2):
+    '''
+    Create one line using a random walk algorithm
+    
+    Parameters
+    ----------
+    points: Integer
+        Number of lines to generate
+    dimensions: Integer or Float
+        Number of dimensions the line has
+        
+    Returns
+    -------
+    line_data: list, shape: (1, dimensions, points)
+        
+    '''
+    line_data = np.empty((dimensions, points))
+    line_data[:, 0] = np.random.rand(dimensions)
+    for i in range(1, points):
+        step = ((np.random.rand(dimensions) - 0.5)*0.1)
+        line_data[:, i] = line_data[:, i-1] + step
+    return line_data
+def update_lines(num, line_data, lines):
+    '''
+    '''
+    for line, data in zip(lines, line_data):
+        line.set_data(data[0:2, :num])
+        line.set_3d_properties(data[2, :num])
+    return lines
+#creating 3d axes
+fig = plt.figure()
+ax = p3d.Axes3D(fig)
+#creating data for line generation
+data = [Line_generation(1000, 3)]
+
+#creating line objects
+lines = [ax.plot(dim[0, 0:1], dim[1, 0:1], dim[2, 0:1])[0] for dim in data]
+#Setting axes bounds
+ax.set_xlim3d([np.float(np.min(data[0][0])), np.float(np.max(data[0][0]))])
+ax.set_xlabel('X')
+ax.set_ylim3d([np.float(np.min(data[0][1])), np.float(np.max(data[0][1]))])
+ax.set_ylabel('Y')
+ax.set_zlim3d([np.float(np.min(data[0][2])), np.float(np.max(data[0][2]))])
+ax.set_zlabel('Z')
+ax.set_title('3D test')
+#Implementing animation of graphical data
+animation = ani.FuncAnimation(fig, update_lines, frames=100, fargs=(data, lines),
+                              interval=5, blit=False)
+plt.show()
+
+
+    
